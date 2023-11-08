@@ -21,8 +21,9 @@ BASE_DIR = Path(__file__).parents[0]
 if __name__=='__main__':
     PROWIM_wingpropinfo.propeller = [PROWIM_prop_1]
     PROWIM_wingpropinfo.nr_props = len(PROWIM_wingpropinfo.propeller)
-    PROWIM_wingpropinfo.propeller[0].rot_rate = 1060
-    PROWIM_wingpropinfo.parameters.vinf = 40
+    PROWIM_wingpropinfo.propeller[0].rot_rate = 600
+    PROWIM_wingpropinfo.propeller[0].span *= 10
+    PROWIM_wingpropinfo.parameters.vinf = 160
     PROWIM_wingpropinfo.parameters.air_density = 1.2087
 
     # db_name = os.path.join(BASE_DIR, 'results', 'data_propeller.db')
@@ -42,10 +43,10 @@ if __name__=='__main__':
                         {'lb': 0,
                         'ub': 90,
                         'scaler': 1./10},
-                    # 'HELIX_0.om_helix.geodef_parametric_0_rot_rate':
-                    #     {'lb': 0,
-                    #     'ub': 3000,
-                    #     'scaler': 1./1060},
+                    'HELIX_0.om_helix.geodef_parametric_0_rot_rate':
+                        {'lb': 0,
+                        'ub': 3000,
+                        'scaler': 1./1060},
                     # 'DESIGNVARIABLES.rotor_0_chord':
                     #     {'lb': -np.inf,
                     #     'ub': np.inf,
@@ -54,7 +55,7 @@ if __name__=='__main__':
 
     constraints = {
                     'HELIX_COUPLED.thrust_total':
-                        {'equals': 5}
+                        {'equals': 4_000}
                     }
     
     prob = om.Problem()
@@ -65,6 +66,14 @@ if __name__=='__main__':
     
     prob.setup()
     prob.run_model()
+    
+    if True:
+        # prob.check_totals(compact_print=True, show_only_incorrect=True)
+        partials = prob.check_partials(compact_print=True, show_only_incorrect=True,
+               includes=['*HELIX_0*'],
+               form='central', step=1e-6)
+        
+        quit()
     
     print_results(design_vars=design_vars, constraints=constraints, objective=objective,
                   prob=prob, kind="Initial Analysis")

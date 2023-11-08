@@ -152,7 +152,7 @@ class WingPropInfo:
         
         print('PROP VERSUS WING SPACING: ', ((self.wing.span-self.nr_props*2*self.prop_radii[0, -1])/(self.spanwise_discretisation_wing))/prop_spacing, ' PLEASE MAKE SURE THIS VLAUE IS CLOSE TO 1.0 FOR BEST RESULTS')
 
-        if self.linear_mesh:
+        if self.linear_mesh: # if you want to compare the custom mesh to a 'normal' OAS linear mesh
             from openaerostruct.geometry.utils import generate_mesh
             
             num_cp = len(self.wing.twist)

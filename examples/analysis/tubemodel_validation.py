@@ -129,6 +129,7 @@ if __name__ == '__main__':
     aoa = validationsetup_data['AoA'][index1:index2]
     CL_Jinf = validationsetup_data['CL'][index1:index2]
     CD_Jinf = validationsetup_data['CD'][index1:index2]
+    
     J_inf = validationsetup_data['J'][index1+1]
     
     # Validation data for J=1
@@ -198,23 +199,23 @@ if __name__ == '__main__':
                 PROWIM_wingpropinfo.NO_CORRECTION=False
                 PROWIM_wingpropinfo.NO_PROPELLER=False
                 # PROWIM_wingpropinfo.wing.CL0 = 0.25#3227
-                PROWIM_wingpropinfo.wing.CD0 = 0.015
+                PROWIM_wingpropinfo.wing.CD0 = 0.025
                 
             elif J[index]==0.796:
                 PROWIM_wingpropinfo.NO_CORRECTION=False
                 PROWIM_wingpropinfo.NO_PROPELLER=False
                 # PROWIM_wingpropinfo.wing.CL0 = 0.25#3079
-                PROWIM_wingpropinfo.wing.CD0 = 0.015
+                PROWIM_wingpropinfo.wing.CD0 = 0.025
                 
             elif J[index]==0.896:
                 PROWIM_wingpropinfo.NO_CORRECTION=False
                 PROWIM_wingpropinfo.NO_PROPELLER=False
                 # PROWIM_wingpropinfo.wing.CL0 = 0.25#2938
-                PROWIM_wingpropinfo.wing.CD0 = 0.015
+                PROWIM_wingpropinfo.wing.CD0 = 0.025
             PROWIM_wingpropinfo.parameters.wing_aoa = angle
 
             prob = om.Problem()
-            prob.model = WingSlipstreamPropOptimisationTest(WingPropInfo=PROWIM_wingpropinfo,
+            prob.model = WingSlipstreamPropOptimisation(WingPropInfo=PROWIM_wingpropinfo,
                                                             objective={},
                                                             constraints={},
                                                             design_vars={})

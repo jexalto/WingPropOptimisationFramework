@@ -123,7 +123,7 @@ if __name__ == '__main__':
     prob.setup()
     prob.run_model()
     
-    if True:
+    if False:
         partials= prob.check_partials(compact_print=True,
                                         show_only_incorrect=True,
                                         includes=[

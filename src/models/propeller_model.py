@@ -113,8 +113,8 @@ class PropellerModel(om.Group):
                 moment_calc=True,
                 power_calc=True,
                 loads_calc=True,
-                velocity_distribution_calc=True,
-                force_distribution_calc=True,
+                velocity_distribution_calc=True, # True
+                force_distribution_calc=True, # True
             ),
         )
     
@@ -208,6 +208,7 @@ class PropellerModel(om.Group):
             rotor.sec[iSection].alpha_0 = self.propellerinfo.airfoils[iSection].alpha_0
             rotor.sec[iSection].alpha_L0 = self.propellerinfo.airfoils[iSection].alpha_L0
             rotor.sec[iSection].Cl_alpha = self.propellerinfo.airfoils[iSection].Cl_alpha
+            rotor.sec[iSection].cd0 = 0.
             rotor.sec[iSection].M = self.propellerinfo.airfoils[iSection].M # this determine how steep the stall curve is
 
         # Span Sections
