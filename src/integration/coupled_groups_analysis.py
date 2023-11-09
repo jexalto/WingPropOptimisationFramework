@@ -4,7 +4,7 @@ import unittest
 # --- Internal ---
 from src.base import WingPropInfo, PropInfo, ParamInfo
 from src.models.propeller_model import PropellerModel, PropellerCoupled
-from src.models.wing_model import WingModel
+from src.models.wing_model import WingModelTube
 from src.models.slipstream_model import SlipStreamModel
 from src.models.parameters import Parameters
 from src.models.design_variables import DesignVariables
@@ -39,7 +39,7 @@ class WingSlipstreamPropAnalysis(om.Group):
                            subsys=SlipStreamModel(WingPropInfo=wingpropinfo))
 
         self.add_subsystem('OPENAEROSTRUCT',
-                           subsys=WingModel(WingPropInfo=wingpropinfo))
+                           subsys=WingModelTube(WingPropInfo=wingpropinfo))
         
         self.add_subsystem('HELIX_COUPLED', 
                            subsys=PropellerCoupled(WingPropInfo=wingpropinfo))

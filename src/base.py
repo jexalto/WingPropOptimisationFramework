@@ -43,7 +43,12 @@ class WingInfo:
     load_factor: float = 1.
     empty_cg: np.array = np.zeros((3))
     CL0: float = 0.
+    CD0: float = 0.
     fuel_mass: float = 0. # we fly eletric
+    youngsmodulus: float = 7e10
+    yieldstress: float = 500e6/2.5
+    G: float = 30e9
+    mrho: float = 3e3
 
 
 @dataclass
@@ -58,6 +63,10 @@ class PropInfo:
     span: np.array
     airfoils: list[AirfoilInfo]
     prop_angle: float = 0.
+    pitch: float = 0.
+    rotation_direction: int = 1 # 1 for cw, -11 for ccw
+    
+    esp: float = 5920 # W/kg
 
     rotation_axis: np.array = np.array([0., 0., 1.])
     ref_point: np.array = np.array([0., 0., 0.])
@@ -82,7 +91,6 @@ class PropInfo:
 
 @dataclass
 class WingPropInfo:
-    spanwise_discretisation_wing: int
     spanwise_discretisation_propeller: int
     # TODO: right now it is assumed that all propellers have the same discretisation.
     #           This is not necessarily true
@@ -98,23 +106,41 @@ class WingPropInfo:
     linear_mesh: bool = False
     
     # Parameters for tube model
-    gamma_tangential_dx: float = 0.1
+    gamma_tangential_dx: float = 0.3 # make sure that this values doesn't place a vortex ring too close to a collocation point: at 75% of chord
     gamma_tangential_x: float = 1.0 # should be a few times larger than the chord length!
+    gamma_dphi: int = 10 # radial discretisation of wake
+    
+    force: np.array = np.zeros(1)
     
     if NO_PROPELLER:
         assert (not NO_CORRECTION), 'ERROR: no propeller so no correction'
 
     def __post_init__(self):
+        # === Propeller information ===
         self.nr_props = len(self.propeller)
         self.prop_locations = np.zeros((self.nr_props), order='F')
         self.prop_radii = np.zeros(
             (self.nr_props, self.spanwise_discretisation_propeller_BEM+1), order='F')
 
-        # Merge the propeller information into a single array
+        #  === Merge the propeller information into a single array ===
         for index, _ in enumerate(self.prop_locations):
             self.prop_locations[index] = self.propeller[index].prop_location
             self.prop_radii[index] = self.propeller[index].prop_radius
-
+        
+        # === Meshing ===
+        self._meshing()
+                
+        # === Misc variables ===
+        self.velocity_distribution_nopropeller = np.ones((self.spanwise_discretisation_nodes-1))*self.parameters.vinf
+        self.forceinput = self.force #np.ones((self.propeller[-1].local_refinement*len(self.propeller[-1].span)))*self.force
+        
+    def _meshing(self):
+        prop_spacing = (2*self.prop_radii[0, -1])/self.spanwise_discretisation_propeller
+        self.spanwise_discretisation_wing = int((self.wing.span-self.nr_props*2*self.prop_radii[0, -1])/((self.nr_props+1)*prop_spacing))
+        if self.spanwise_discretisation_wing%2==0: self.spanwise_discretisation_wing+=1
+        
+        self.spanwise_discretisation_wing *= self.nr_props+1
+        
         self.vlm_mesh = meshing(span=self.wing.span,
                                 chord=self.wing.chord[0],
                                 prop_locations=self.prop_locations,
@@ -125,17 +151,13 @@ class WingPropInfo:
         
         self.spanwise_discretisation_nodes = np.shape(self.vlm_mesh)[1]
         
-        wing_spacing = (self.wing.span-self.nr_props*2*self.prop_radii[0, -1])/self.spanwise_discretisation_wing
-        prop_spacing = (2*self.prop_radii[0, -1])/self.spanwise_discretisation_propeller
-        
-        print('PROP VERSUS WING SPACING: ', wing_spacing/prop_spacing, ' PLEASE MAKE SURE THIS VLAUE IS CLOSE TO 1.0 FOR BEST RESULTS')
-        assert (wing_spacing/prop_spacing>0.95 and wing_spacing/prop_spacing<1.05), 'DISCREPANCY BETWEEN WING AND PROP SPACING TOO LARGE'        
-        
-        # TODO: fix this class, it looks pretty terrible rn
-        if self.linear_mesh:
+        print('PROP VERSUS WING SPACING: ', ((self.wing.span-self.nr_props*2*self.prop_radii[0, -1])/(self.spanwise_discretisation_wing))/prop_spacing, ' PLEASE MAKE SURE THIS VLAUE IS CLOSE TO 1.0 FOR BEST RESULTS')
+
+        if self.linear_mesh: # if you want to compare the custom mesh to a 'normal' OAS linear mesh
             from openaerostruct.geometry.utils import generate_mesh
             
             num_cp = len(self.wing.twist)
+            
             mesh_dict = {"num_y": self.spanwise_discretisation_nodes,
                 "num_x": 2,
                 "wing_type": "rect",
@@ -153,7 +175,4 @@ class WingPropInfo:
         for panel in range(self.spanwise_discretisation_nodes-1):
             self.vlm_mesh_control_points[panel] = 0.5 * \
                 (self.vlm_mesh[0, panel, 1]+self.vlm_mesh[0, panel+1, 1])
-        
-        # This velocity distribution will be used in case no propellers are configured
-        self.velocity_distribution_nopropeller = np.ones((self.spanwise_discretisation_nodes-1))*self.parameters.vinf
         
