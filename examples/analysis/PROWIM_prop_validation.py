@@ -33,6 +33,7 @@ chord = data['chord']
 alpha_0 = data['alpha_0']
 alpha_L0 = data['alpha_L0']
 Cl_alpha = data['Cl_alpha']
+CD0 = np.array(data['cd0'])
 M = data['M']
 
 # === Set wing parameters ===
@@ -56,6 +57,7 @@ prop1 = PropInfo(label='Prop1',
                                        Cl_alpha=Cl_alpha[index],
                                        alpha_L0=alpha_L0[index],
                                        alpha_0=alpha_0[index],
+                                       CD0 = np.array([CD0[0, index], CD0[1, index], CD0[2, index]]),
                                        M=M[index])
                            for index in range(spanwise_discretisation_propeller_BEM+1)],
                  ref_point=np.array(ref_point),
@@ -76,6 +78,7 @@ prop2 = PropInfo(label='Prop1',
                                        Cl_alpha=Cl_alpha[index],
                                        alpha_L0=alpha_L0[index],
                                        alpha_0=alpha_0[index],
+                                       CD0 = np.array([CD0[0, index], CD0[1, index], CD0[2, index]]),
                                        M=M[index])
                            for index in range(spanwise_discretisation_propeller_BEM+1)],
                  ref_point=np.array(ref_point),

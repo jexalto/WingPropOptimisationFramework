@@ -28,6 +28,7 @@ class AirfoilInfo:
     Cl_alpha: float     # Cl alpha lift slope
     alpha_L0: float     # zero lift angle
     alpha_0: float      # stall angle
+    CD0: np.array
     M: float = 50.
 
 

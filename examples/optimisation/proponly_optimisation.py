@@ -25,13 +25,6 @@ if __name__=='__main__':
     PROWIM_wingpropinfo.propeller[0].span *= 10
     PROWIM_wingpropinfo.parameters.vinf = 160
     PROWIM_wingpropinfo.parameters.air_density = 1.2087
-
-    # db_name = os.path.join(BASE_DIR, 'results', 'data_propeller.db')
-    # savepath = os.path.join(BASE_DIR, 'results', 'prop_results')
-    # stackedplots_prop(db_name=db_name,
-    #                     wingpropinfo=PROWIM_wingpropinfo,
-    #                     savedir=savepath)
-    # quit()
     
     objective = {
                 'HELIX_COUPLED.power_total':
@@ -47,10 +40,6 @@ if __name__=='__main__':
                         {'lb': 0,
                         'ub': 3000,
                         'scaler': 1./1060},
-                    # 'DESIGNVARIABLES.rotor_0_chord':
-                    #     {'lb': -np.inf,
-                    #     'ub': np.inf,
-                    #     'scaler': 1./0.012032137566147693}
                     }
 
     constraints = {
@@ -67,7 +56,7 @@ if __name__=='__main__':
     prob.setup()
     prob.run_model()
     
-    if True:
+    if False:
         # prob.check_totals(compact_print=True, show_only_incorrect=True)
         partials = prob.check_partials(compact_print=True, show_only_incorrect=True,
                includes=['*HELIX_0*'],

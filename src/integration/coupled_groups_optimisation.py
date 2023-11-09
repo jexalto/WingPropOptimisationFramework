@@ -2,7 +2,7 @@
 
 # --- Internal ---
 from src.base import WingPropInfo, PropInfo, ParamInfo
-from src.models.propeller_model import PropellerModel, PropellerCoupled, PropellerPitch
+from src.models.propeller_model import PropellerModel, PropellerCoupled
 from src.models.wing_model import WingModelTube, WingModelWingBox
 from src.models.slipstream_model import SlipStreamModel
 from src.models.parameters import Parameters
@@ -674,8 +674,8 @@ class PropOptimisationPitch(om.Group):
             self.connect(f"blade_chord_spline_{propeller_nr}.y",
                          f"HELIX_{propeller_nr}.om_helix.geodef_parametric_0_chord")
             
-        self.add_subsystem('HELIX_PITCH',
-                           subsys=PropellerPitch(WingPropInfo=wingpropinfo))
+        # self.add_subsystem('HELIX_PITCH',
+        #                    subsys=PropellerPitch(WingPropInfo=wingpropinfo))
 
         self.add_subsystem('HELIX_COUPLED',
                            subsys=PropellerCoupled(WingPropInfo=wingpropinfo))
