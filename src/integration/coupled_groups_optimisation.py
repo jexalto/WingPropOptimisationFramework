@@ -58,6 +58,9 @@ class WingSlipstreamPropOptimisation(om.Group):
                                                         NO_PROPELLER=wingpropinfo.NO_PROPELLER,
                                                         mesh=wingpropinfo.vlm_mesh,))
 
+        self.add_subsystem('HELIX_COUPLED',
+                           subsys=PropellerCoupled(WingPropInfo=wingpropinfo))
+        
         # Coupled group
         coupled_OAS_TUBE = om.Group()
         
@@ -78,17 +81,20 @@ class WingSlipstreamPropOptimisation(om.Group):
                                                                 gamma_tangential_x=wingpropinfo.gamma_tangential_x,
                                                                 propeller_discretisation_BEM=wingpropinfo.spanwise_discretisation_propeller_BEM,
                                                                 propeller_discretisation=wingpropinfo.spanwise_discretisation_propeller,
-                                                                mesh=wingpropinfo.vlm_mesh,))
+                                                                mesh=wingpropinfo.vlm_mesh))
         
         coupled_OAS_TUBE.nonlinear_solver = om.NonlinearBlockGS(use_aitken=True)
         coupled_OAS_TUBE.nonlinear_solver.options["maxiter"] = 100
-        coupled_OAS_TUBE.nonlinear_solver.options["atol"] = 1e-4 #TODO: why does it perform so bad for certain angles+advance ratios
+        coupled_OAS_TUBE.nonlinear_solver.options["atol"] = 1e-5 #TODO: why does it perform so bad for certain angles+advance ratios
         coupled_OAS_TUBE.nonlinear_solver.options["rtol"] = 1e-30
         coupled_OAS_TUBE.nonlinear_solver.options["iprint"] = 2
         coupled_OAS_TUBE.nonlinear_solver.options["err_on_non_converge"] = False
 
-        # coupled_OAS_TUBE.linear_solver = om.LinearBlockGS()
-        # coupled_OAS_TUBE.options["assembled_jac_type"] = "csc"
+        coupled_OAS_TUBE.linear_solver = om.PETScKrylov()
+        coupled_OAS_TUBE.linear_solver.precon = om.LinearRunOnce()
+        coupled_OAS_TUBE.linear_solver.options["atol"] = 1e-6
+        coupled_OAS_TUBE.linear_solver.options["iprint"] = 2
+        coupled_OAS_TUBE.linear_solver.options["err_on_non_converge"] = False
         
         self.add_subsystem('COUPLED_OAS_TUBE',
                            subsys=coupled_OAS_TUBE,
@@ -96,9 +102,6 @@ class WingSlipstreamPropOptimisation(om.Group):
                            promotes_outputs=['*'])
 
         # Outputs
-        self.add_subsystem('HELIX_COUPLED',
-                           subsys=PropellerCoupled(WingPropInfo=wingpropinfo))
-
         self.add_subsystem('CONSTRAINTS',
                            subsys=ConstraintsThrustDrag())
 

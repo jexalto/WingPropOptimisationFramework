@@ -34,7 +34,7 @@ wing_chord = 0.24*2
 wingspan = 0.73*2.*0.952
 
 prop_refinement = 4
-num_cp = 15 # wing
+num_cp = 10 # wing
 
 spanwise_discretisation_propeller_BEM = len(span)
 

@@ -36,12 +36,12 @@ if __name__ == '__main__':
     # PROWIM_wingpropinfo.linear_mesh = True
     # PROWIM_wingpropinfo.__post_init__()
     
-    PROWIM_wingpropinfo.wing.twist = np.array([-0.47012745,  0.57791105,  2.50152062,  4.38360291,  5.9963285 ,
-                                                7.08826306,  7.81453015,  6.49637919,  7.80467608,  7.1034328 ,
-                                                5.98106769,  4.35521603,  2.47558433,  0.55751195, -0.47555508])
-    PROWIM_wingpropinfo.wing.chord =  np.array([0.08329586, 0.08340191, 0.0832217 , 0.08340579, 0.08323511,
-                                                0.08352932, 0.08280204, 0.09805698, 0.08257516, 0.08350386,
-                                                0.08337559, 0.08324213, 0.08337507, 0.08330022, 0.08326784])
+    # PROWIM_wingpropinfo.wing.twist = np.array([-0.47012745,  0.57791105,  2.50152062,  4.38360291,  5.9963285 ,
+    #                                             7.08826306,  7.81453015,  6.49637919,  7.80467608,  7.1034328 ,
+    #                                             5.98106769,  4.35521603,  2.47558433,  0.55751195, -0.47555508])
+    # PROWIM_wingpropinfo.wing.chord =  np.array([0.08329586, 0.08340191, 0.0832217 , 0.08340579, 0.08323511,
+    #                                             0.08352932, 0.08280204, 0.09805698, 0.08257516, 0.08350386,
+    #                                             0.08337559, 0.08324213, 0.08337507, 0.08330022, 0.08326784])
     
     objective = {
                 'OPENAEROSTRUCT.AS_point_0.total_perf.D':
@@ -87,6 +87,8 @@ if __name__ == '__main__':
     # === Analysis ===
     prob.setup()
     prob.run_model()
+    prob.check_totals(compact_print=True)
+    quit()
     om.n2(prob, 'wingonly_opt.html')
     
     print_results(design_vars=design_vars, constraints=constraints, objective=objective,

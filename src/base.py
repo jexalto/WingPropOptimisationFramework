@@ -156,6 +156,7 @@ class WingPropInfo:
             from openaerostruct.geometry.utils import generate_mesh
             
             num_cp = len(self.wing.twist)
+            
             mesh_dict = {"num_y": self.spanwise_discretisation_nodes,
                 "num_x": 2,
                 "wing_type": "rect",
