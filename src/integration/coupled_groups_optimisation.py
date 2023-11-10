@@ -85,16 +85,17 @@ class WingSlipstreamPropOptimisation(om.Group):
         
         coupled_OAS_TUBE.nonlinear_solver = om.NonlinearBlockGS(use_aitken=True)
         coupled_OAS_TUBE.nonlinear_solver.options["maxiter"] = 100
-        coupled_OAS_TUBE.nonlinear_solver.options["atol"] = 1e-5 #TODO: why does it perform so bad for certain angles+advance ratios
+        coupled_OAS_TUBE.nonlinear_solver.options["atol"] = 1e-4 #TODO: why does it perform so bad for certain angles+advance ratios
         coupled_OAS_TUBE.nonlinear_solver.options["rtol"] = 1e-30
         coupled_OAS_TUBE.nonlinear_solver.options["iprint"] = 2
         coupled_OAS_TUBE.nonlinear_solver.options["err_on_non_converge"] = False
 
         coupled_OAS_TUBE.linear_solver = om.PETScKrylov()
-        coupled_OAS_TUBE.linear_solver.precon = om.LinearRunOnce()
+        coupled_OAS_TUBE.linear_solver.precon = om.LinearRunOnce(iprint=-1)
+        # coupled_OAS_TUBE.linear_solver.options["assemble_jac"] = True
         coupled_OAS_TUBE.linear_solver.options["atol"] = 1e-6
-        coupled_OAS_TUBE.linear_solver.options["iprint"] = 2
-        coupled_OAS_TUBE.linear_solver.options["err_on_non_converge"] = False
+        coupled_OAS_TUBE.linear_solver.options["iprint"] = 1
+        coupled_OAS_TUBE.linear_solver.options["err_on_non_converge"] = True
         
         self.add_subsystem('COUPLED_OAS_TUBE',
                            subsys=coupled_OAS_TUBE,

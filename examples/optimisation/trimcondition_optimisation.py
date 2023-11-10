@@ -117,7 +117,7 @@ if __name__ == '__main__':
                                                 design_vars=design_vars)
 
     # === Analysis ===
-    prob.setup()
+    prob.setup(mode='rev')
     prob.run_model()
     
     prob.run_model()
