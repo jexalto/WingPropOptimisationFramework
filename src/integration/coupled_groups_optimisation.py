@@ -377,7 +377,7 @@ class WingRethorstPropOptimisation(om.Group):
         # self.connect('DESIGNVARIABLES.span',
         #              'OPENAEROSTRUCT.wing.geometry.span')
 
-        # HELIX to RETHORST
+        # HELIX to RETHORSTx
         for index, _ in enumerate(wingpropinfo.propeller):
             self.connect(f"HELIX_{index}.om_helix.rotorcomp_0_radii",
                         f"RETHORST.interpolation.propeller_radii_BEM_rotor{index}")
