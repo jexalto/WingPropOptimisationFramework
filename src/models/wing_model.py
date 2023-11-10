@@ -110,7 +110,7 @@ class WingModelTube(om.Group):
         self.connect(name + ".structural_mass", point_name + "." + "total_perf." + name + "_structural_mass")
         self.connect(name + ".t_over_c", com_name + ".t_over_c")
         
-        self.linear_solver = om.DirectSolver()
+        self.linear_solver = om.DirectSolver(assemble_jac=False)
         
 class WingModelWingBox(om.Group):
     

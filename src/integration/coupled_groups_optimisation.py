@@ -67,35 +67,35 @@ class WingSlipstreamPropOptimisation(om.Group):
         coupled_OAS_TUBE.add_subsystem('OPENAEROSTRUCT',
                                         subsys=WingModelTube(WingPropInfo=wingpropinfo))
 
-        coupled_OAS_TUBE.add_subsystem('TUBEMODEL',
-                                        subsys=SliptreamTube(   propeller_quantity=len(wingpropinfo.propeller),
-                                                                wingpropinfo=wingpropinfo,
-                                                                prop_rotation=[wingpropinfo.propeller[index].rotation_direction for index in range(len(wingpropinfo.propeller))],
-                                                                nr_blades=[wingpropinfo.propeller[index].nr_blades for index in range(len(wingpropinfo.propeller))],
-                                                                prop_angle=[wingpropinfo.propeller[index].prop_angle for index in range(len(wingpropinfo.propeller))],
-                                                                prop_location=[wingpropinfo.propeller[index].prop_location for index in range(len(wingpropinfo.propeller))],
-                                                                propeller_tipradii=[wingpropinfo.propeller[index].prop_radius[-1] for index in range(wingpropinfo.nr_props)],
-                                                                propeller_local_refinement=wingpropinfo.propeller[0].local_refinement,
-                                                                gamma_tangential_dx=wingpropinfo.gamma_tangential_dx,
-                                                                gamma_dphi=wingpropinfo.gamma_dphi,
-                                                                gamma_tangential_x=wingpropinfo.gamma_tangential_x,
-                                                                propeller_discretisation_BEM=wingpropinfo.spanwise_discretisation_propeller_BEM,
-                                                                propeller_discretisation=wingpropinfo.spanwise_discretisation_propeller,
-                                                                mesh=wingpropinfo.vlm_mesh))
+        # coupled_OAS_TUBE.add_subsystem('TUBEMODEL',
+        #                                 subsys=SliptreamTube(   propeller_quantity=len(wingpropinfo.propeller),
+        #                                                         wingpropinfo=wingpropinfo,
+        #                                                         prop_rotation=[wingpropinfo.propeller[index].rotation_direction for index in range(len(wingpropinfo.propeller))],
+        #                                                         nr_blades=[wingpropinfo.propeller[index].nr_blades for index in range(len(wingpropinfo.propeller))],
+        #                                                         prop_angle=[wingpropinfo.propeller[index].prop_angle for index in range(len(wingpropinfo.propeller))],
+        #                                                         prop_location=[wingpropinfo.propeller[index].prop_location for index in range(len(wingpropinfo.propeller))],
+        #                                                         propeller_tipradii=[wingpropinfo.propeller[index].prop_radius[-1] for index in range(wingpropinfo.nr_props)],
+        #                                                         propeller_local_refinement=wingpropinfo.propeller[0].local_refinement,
+        #                                                         gamma_tangential_dx=wingpropinfo.gamma_tangential_dx,
+        #                                                         gamma_dphi=wingpropinfo.gamma_dphi,
+        #                                                         gamma_tangential_x=wingpropinfo.gamma_tangential_x,
+        #                                                         propeller_discretisation_BEM=wingpropinfo.spanwise_discretisation_propeller_BEM,
+        #                                                         propeller_discretisation=wingpropinfo.spanwise_discretisation_propeller,
+        #                                                         mesh=wingpropinfo.vlm_mesh))
         
-        coupled_OAS_TUBE.nonlinear_solver = om.NonlinearBlockGS(use_aitken=True)
-        coupled_OAS_TUBE.nonlinear_solver.options["maxiter"] = 100
-        coupled_OAS_TUBE.nonlinear_solver.options["atol"] = 1e-4 #TODO: why does it perform so bad for certain angles+advance ratios
-        coupled_OAS_TUBE.nonlinear_solver.options["rtol"] = 1e-30
-        coupled_OAS_TUBE.nonlinear_solver.options["iprint"] = 2
-        coupled_OAS_TUBE.nonlinear_solver.options["err_on_non_converge"] = False
+        # coupled_OAS_TUBE.nonlinear_solver = om.NonlinearBlockGS(use_aitken=True)
+        # coupled_OAS_TUBE.nonlinear_solver.options["maxiter"] = 100
+        # coupled_OAS_TUBE.nonlinear_solver.options["atol"] = 1e-4 #TODO: why does it perform so bad for certain angles+advance ratios
+        # coupled_OAS_TUBE.nonlinear_solver.options["rtol"] = 1e-30
+        # coupled_OAS_TUBE.nonlinear_solver.options["iprint"] = 2
+        # coupled_OAS_TUBE.nonlinear_solver.options["err_on_non_converge"] = False
 
-        coupled_OAS_TUBE.linear_solver = om.PETScKrylov()
-        coupled_OAS_TUBE.linear_solver.precon = om.LinearRunOnce(iprint=-1)
-        # coupled_OAS_TUBE.linear_solver.options["assemble_jac"] = True
-        coupled_OAS_TUBE.linear_solver.options["atol"] = 1e-6
-        coupled_OAS_TUBE.linear_solver.options["iprint"] = 1
-        coupled_OAS_TUBE.linear_solver.options["err_on_non_converge"] = True
+        # coupled_OAS_TUBE.linear_solver = om.PETScKrylov()
+        # coupled_OAS_TUBE.linear_solver.precon = om.LinearRunOnce(iprint=-1)
+        # # coupled_OAS_TUBE.linear_solver.options["assemble_jac"] = True
+        # coupled_OAS_TUBE.linear_solver.options["atol"] = 1e-6
+        # coupled_OAS_TUBE.linear_solver.options["iprint"] = 1
+        # coupled_OAS_TUBE.linear_solver.options["err_on_non_converge"] = True
         
         self.add_subsystem('COUPLED_OAS_TUBE',
                            subsys=coupled_OAS_TUBE,
@@ -157,18 +157,18 @@ class WingSlipstreamPropOptimisation(om.Group):
         # PARAMS to TUBEMODEL
         for index, _ in enumerate(wingpropinfo.propeller):
             self.connect("PARAMETERS.vinf",
-                        f"TUBEMODEL.TUBEMODEL_coupled.TUBEMODEL_circulations_{index}.vinf")
+                        f"OPENAEROSTRUCT.AS_point_0.coupled.aero_states.TUBEMODEL.TUBEMODEL_coupled.TUBEMODEL_circulations_{index}.vinf")
             self.connect("PARAMETERS.vinf",
-                        f"TUBEMODEL.TUBEMODEL_coupled.TUBEMODEL_KuttaJoukowski_{index}.vinf")
+                        f"OPENAEROSTRUCT.AS_point_0.coupled.aero_states.TUBEMODEL.TUBEMODEL_coupled.TUBEMODEL_KuttaJoukowski_{index}.vinf")
             self.connect("PARAMETERS.rho",
-                        f"TUBEMODEL.TUBEMODEL_coupled.TUBEMODEL_KuttaJoukowski_{index}.rhoinf")
+                        f"OPENAEROSTRUCT.AS_point_0.coupled.aero_states.TUBEMODEL.TUBEMODEL_coupled.TUBEMODEL_KuttaJoukowski_{index}.rhoinf")
 
         # DVs to TUBEMODEL
         for index, _ in enumerate(wingpropinfo.propeller):
             self.connect(f"DESIGNVARIABLES.rotor_{index}_rot_rate",
-                         f"TUBEMODEL.TUBEMODEL_coupled.TUBEMODEL_circulations_{index}.propeller_omega")
+                         f"OPENAEROSTRUCT.AS_point_0.coupled.aero_states.TUBEMODEL.TUBEMODEL_coupled.TUBEMODEL_circulations_{index}.propeller_omega")
             self.connect(f"DESIGNVARIABLES.rotor_{index}_rot_rate",
-                         f"TUBEMODEL.TUBEMODEL_coupled.TUBEMODEL_KuttaJoukowski_{index}.propeller_omega")
+                         f"OPENAEROSTRUCT.AS_point_0.coupled.aero_states.TUBEMODEL.TUBEMODEL_coupled.TUBEMODEL_KuttaJoukowski_{index}.propeller_omega")
         
         # DVs to HELIX
         for index, _ in enumerate(wingpropinfo.propeller):
@@ -191,10 +191,14 @@ class WingSlipstreamPropOptimisation(om.Group):
             self.connect(f"HELIX_{index}.om_helix.rotorcomp_0_velocity_distribution",
                          f"RETHORST.interpolation.propeller_velocity_BEM_rotor{index}")
             # Tube model
+            # self.connect(f"HELIX_{index}.om_helix.rotorcomp_0_radii",
+            #              f"TUBEMODEL.TUBEMODEL_coupled.TUBEMODEL_forceinterpolation_{index}.propeller_radii_BEM_rotor0")
+            # self.connect(f"HELIX_{index}.om_helix.rotorcomp_0_f_a", # f"HELIX_{index}.om_helix.rotorcomp_0_f_a", # PARAMETERS.force_distr #
+            #              f"TUBEMODEL.TUBEMODEL_coupled.TUBEMODEL_forceinterpolation_{index}.propeller_force_BEM_rotor0")
             self.connect(f"HELIX_{index}.om_helix.rotorcomp_0_radii",
-                         f"TUBEMODEL.TUBEMODEL_coupled.TUBEMODEL_forceinterpolation_{index}.propeller_radii_BEM_rotor0")
+                         f"OPENAEROSTRUCT.AS_point_0.coupled.aero_states.TUBEMODEL.TUBEMODEL_coupled.TUBEMODEL_forceinterpolation_{index}.propeller_radii_BEM_rotor0")
             self.connect(f"HELIX_{index}.om_helix.rotorcomp_0_f_a", # f"HELIX_{index}.om_helix.rotorcomp_0_f_a", # PARAMETERS.force_distr #
-                         f"TUBEMODEL.TUBEMODEL_coupled.TUBEMODEL_forceinterpolation_{index}.propeller_force_BEM_rotor0")
+                         f"OPENAEROSTRUCT.AS_point_0.coupled.aero_states.TUBEMODEL.TUBEMODEL_coupled.TUBEMODEL_forceinterpolation_{index}.propeller_force_BEM_rotor0")
 
         # HELIX to HELIX_COUPLED
         for index in range(wingpropinfo.nr_props):
@@ -212,10 +216,10 @@ class WingSlipstreamPropOptimisation(om.Group):
         # OPENAEROSTRUCT to TUBEMODEL
         for index in range(wingpropinfo.nr_props):
             self.connect('OPENAEROSTRUCT.AS_point_0.coupled.aero_states.coll_pts',
-                        f'TUBEMODEL.TUBEMODEL_coupled.TUBEMODEL_biotsavart_{index}.collocation_points')
+                        f'OPENAEROSTRUCT.AS_point_0.coupled.aero_states.TUBEMODEL.TUBEMODEL_coupled.TUBEMODEL_biotsavart_{index}.collocation_points')
         
         # TUBEMODEL to OPENAEROSTRUCT
-        self.connect('TUBEMODEL.TUBEMODEL_velocity_output.velocity_vector',
+        self.connect('OPENAEROSTRUCT.AS_point_0.coupled.aero_states.TUBEMODEL.TUBEMODEL_velocity_output.velocity_vector',
                      'OPENAEROSTRUCT.AS_point_0.coupled.aero_states.induced_velocity_vector')
         
         # OPENAEROSTRUCT to CONSTRAINTS

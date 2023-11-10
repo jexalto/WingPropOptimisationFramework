@@ -117,10 +117,10 @@ if __name__ == '__main__':
                                                 design_vars=design_vars)
 
     # === Analysis ===
-    prob.setup(mode='rev')
+    prob.setup()
     prob.run_model()
+    om.n2(prob)
     
-    prob.run_model()
     prob.check_totals(
         compact_print=True,
         show_only_incorrect=True
