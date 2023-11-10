@@ -65,26 +65,26 @@ if __name__ == '__main__':
                         {'lb': 0,
                         'ub': 3000,
                         'scaler': 1./PROWIM_wingpropinfo.propeller[1].rot_rate},
-                    # 'DESIGNVARIABLES.rotor_0_twist':
-                    #     {'lb': 0,
-                    #     'ub': 90,
-                    #     'scaler': 1./10},
-                    # 'DESIGNVARIABLES.rotor_1_twist':
-                    #     {'lb': 0,
-                    #     'ub': 90,
-                    #     'scaler': 1./10},
+                    'DESIGNVARIABLES.rotor_0_twist':
+                        {'lb': 0,
+                        'ub': 90,
+                        'scaler': 1./10},
+                    'DESIGNVARIABLES.rotor_1_twist':
+                        {'lb': 0,
+                        'ub': 90,
+                        'scaler': 1./10},
                     'PARAMETERS.alpha':
                         {'lb': -10,
                         'ub': 10,
                         'scaler': 1},
-                    # 'DESIGNVARIABLES.twist':
-                    #     {'lb': -10,
-                    #     'ub': 8,
-                    #     'scaler': 1},
-                    # 'DESIGNVARIABLES.chord':
-                    #     {'lb': 0,
-                    #     'ub': 3,
-                        # 'scaler': 1},
+                    'DESIGNVARIABLES.twist':
+                        {'lb': -10,
+                        'ub': 8,
+                        'scaler': 1},
+                    'DESIGNVARIABLES.chord':
+                        {'lb': 0,
+                        'ub': 3,
+                        'scaler': 1},
                     'OPENAEROSTRUCT.wing.thickness_cp':
                         {'lb': 3e-3,
                         'ub': 3e-3,
@@ -119,6 +119,13 @@ if __name__ == '__main__':
     # === Analysis ===
     prob.setup()
     prob.run_model()
+    
+    prob.run_model()
+    prob.check_totals(
+        compact_print=True,
+        show_only_incorrect=True
+    )
+    quit()
 
         # Check derivatives  
     if False:

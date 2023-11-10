@@ -30,6 +30,8 @@ if __name__ == '__main__':
 
     Preq = 0
     mbat = 4
+    PROWIM_wingpropinfo.spanwise_discretisation_propeller = 11
+    PROWIM_wingpropinfo.__post_init__()
     PROWIM_wingpropinfo.wing.empty_weight = mbat + Preq/PROWIM_wingpropinfo.propeller[0].esp # weight model
     PROWIM_wingpropinfo.wing.CL0 = 0.
     # PROWIM_wingpropinfo.wing.span *= 1
@@ -87,7 +89,10 @@ if __name__ == '__main__':
     # === Analysis ===
     prob.setup()
     prob.run_model()
-    prob.check_totals(compact_print=True)
+    
+    prob.check_totals(compact_print=True,
+                      show_only_incorrect=True)
+    
     quit()
     om.n2(prob, 'wingonly_opt.html')
     

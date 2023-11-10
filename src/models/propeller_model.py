@@ -21,6 +21,8 @@ class PropellerCoupled(om.ExplicitComponent):
     def setup(self):
         # === Options ===
         self.wingpropinfo = self.options["WingPropInfo"]
+        self.Pisolated = 56.57407795*2
+        self.mbat_iso = 4
         
         # === Inputs ===
         for propeller_nr in range(self.wingpropinfo.nr_props):
@@ -31,6 +33,7 @@ class PropellerCoupled(om.ExplicitComponent):
         # === Outputs ===
         self.add_output('thrust_total', shape=1)
         self.add_output('power_total', shape=1)
+        self.add_output('weight_total', shape=1)
         
         # === Partials ===
         for propeller_nr in range(self.wingpropinfo.nr_props):
@@ -38,9 +41,12 @@ class PropellerCoupled(om.ExplicitComponent):
                                     rows=[0], cols=[3*TIME_STEPS_HELIX-1], val=1)
             self.declare_partials('power_total', f'power_prop_{propeller_nr}', 
                                     rows=[0], cols=[0], val=1)
+            self.declare_partials('weight_total', f'power_prop_{propeller_nr}', 
+                                    rows=[0], cols=[0], val=0)#1/self.wingpropinfo.propeller[0].esp + self.mbat_iso/self.Pisolated)
         
     def compute(self, inputs, outputs):
         thrust, power = [], []
+        ESP = self.wingpropinfo.propeller[0].esp
         
         for propeller_nr in range(self.wingpropinfo.nr_props):
             thrust.append(inputs[f'thrust_prop_{propeller_nr}'][2, TIME_STEPS_HELIX-1]) # only last entries contain the value
@@ -48,6 +54,38 @@ class PropellerCoupled(om.ExplicitComponent):
             
         outputs['thrust_total'] = np.sum(thrust)
         outputs['power_total'] = np.sum(power)
+        battery_weight = outputs['power_total']/self.Pisolated * self.mbat_iso
+        outputs['weight_total'] = self.wingpropinfo.wing.empty_weight #+ outputs['power_total']/ESP + battery_weight
+
+class PropellerPitch(om.ExplicitComponent):
+    def initialize(self):
+        self.options.declare('WingPropInfo', default=WingPropInfo)
+        
+    def setup(self):
+        # === Options ===
+        self.wingpropinfo = self.options["WingPropInfo"]
+        nr_twist_dvs = len(self.wingpropinfo.propeller[0].twist)
+        
+        for propeller_nr in range(self.wingpropinfo.nr_props):
+            # === Inputs ===
+            self.add_input(f'rotor_{propeller_nr}_twist', shape=nr_twist_dvs)
+            self.add_input(f'rotor_{propeller_nr}_pitch', shape=1)
+            
+            # === Outputs ===
+            self.add_output(f'rotor_{propeller_nr}_twist_adjusted', shape=nr_twist_dvs)
+            
+            # === Partials ===
+            self.declare_partials(f'rotor_{propeller_nr}_twist_adjusted',
+                                f'rotor_{propeller_nr}_twist',
+                                val=1)
+            self.declare_partials(f'rotor_{propeller_nr}_twist_adjusted',
+                                f'rotor_{propeller_nr}_pitch',
+                                rows=np.arange(0,nr_twist_dvs),
+                                cols=np.arange(0,nr_twist_dvs))
+        
+    def compute(self, inputs, outputs):
+        for propeller_nr in range(self.wingpropinfo.nr_props):
+            outputs[f'rotor_{propeller_nr}_twist_adjusted'] = inputs[f'rotor_{propeller_nr}_twist']+inputs[f'rotor_{propeller_nr}_pitch']
 
 
 class PropellerModel(om.Group):

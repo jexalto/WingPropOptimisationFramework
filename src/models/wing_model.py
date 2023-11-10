@@ -36,9 +36,9 @@ class WingModelTube(om.Group):
     "S_ref_type": "wetted",  # how we compute the wing area,
     # can be 'wetted' or 'projected'
     "fem_model_type": "tube",
-    "thickness_cp": 0.01 * np.ones(10),  # [m]
-    "twist_cp": np.zeros(10),
-    "chord_cp": np.ones(10),
+    "thickness_cp": 0.01 * np.ones(15),  # [m]
+    "twist_cp": np.zeros(15),
+    "chord_cp": np.ones(15),
     "mesh": mesh,
     # Aerodynamic performance of the lifting surface at
     # an angle of attack of 0 (alpha=0).

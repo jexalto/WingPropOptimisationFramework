@@ -77,7 +77,7 @@ PROWIM_prop_2 = PropInfo(label='Prop1',
                                                Cl_alpha=Cl_alpha[index],
                                                alpha_L0=alpha_L0[index],
                                                alpha_0=alpha_0[index],
-                                               CD0=np.array([CD0[0], CD0[1], CD0[2]]),
+                                               CD0=np.array([CD0[0, index], CD0[1, index], CD0[2, index]]),
                                                M=M[index])
                                    for index in range(spanwise_discretisation_propeller_BEM+1)],
                          ref_point=ref_point,

@@ -74,7 +74,7 @@ def DEP_comparison(thrust: float, radius: float, nr_props: int):
     print('==========================================================')
     print('====================== Optimisation ======================')
     print('==========================================================')
-    prob.setup(mode='rev')
+    prob.setup(mode='rev')    
     prob.run_driver()
     
     print_results(design_vars=design_vars, constraints=constraints, objective=objective,
