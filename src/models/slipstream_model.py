@@ -31,7 +31,7 @@ class SlipStreamModel(om.Group):
         self.add_subsystem('correction',
                            subsys=RETHORST_correction(propeller_quantity=wingpropinfo.nr_props,
                                                       propeller_discretisation=wingpropinfo.spanwise_discretisation_propeller,
-                                                      mesh=wingpropinfo.vlm_mesh,
+                                                      wing_mesh_size=wingpropinfo.spanwise_discretisation_nodes,
                                                       NO_CORRECTION=wingpropinfo.NO_CORRECTION,
                                                       NO_PROPELLER=wingpropinfo.NO_PROPELLER),
                            promotes_inputs=['propeller_locations',

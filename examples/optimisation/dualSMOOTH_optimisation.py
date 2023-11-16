@@ -27,8 +27,9 @@ if __name__ == '__main__':
     #             savedir=savepath)
     # quit()
 
-    PROWIM_wingpropinfo.wing.empty_weight = 15 # to make T=D
+    PROWIM_wingpropinfo.wing.empty_weight = 5 # to make T=D
     PROWIM_wingpropinfo.wing.CL0 = 0. # to make T=D
+    PROWIM_wingpropinfo.tubemodelON = False
 
     PROWIM_wingpropinfo.__post_init__()
     
@@ -118,9 +119,9 @@ if __name__ == '__main__':
     prob.driver.options['optimizer'] = 'SNOPT'
     prob.driver.options['debug_print'] = ['desvars', 'nl_cons']
     prob.driver.opt_settings = {
-        "Major feasibility tolerance": 1.0e-9,
-        "Major optimality tolerance": 1.0e-9,
-        "Minor feasibility tolerance": 1.0e-8,
+        "Major feasibility tolerance": 1.0e-6,
+        "Major optimality tolerance": 1.0e-6,
+        "Minor feasibility tolerance": 1.0e-6,
         "Verify level": -1,
         "Function precision": 1.0e-6,
         # "Major iterations limit": 1,

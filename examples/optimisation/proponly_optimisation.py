@@ -20,11 +20,7 @@ BASE_DIR = Path(__file__).parents[0]
 
 if __name__=='__main__':
     PROWIM_wingpropinfo.propeller = [PROWIM_prop_1]
-    PROWIM_wingpropinfo.nr_props = len(PROWIM_wingpropinfo.propeller)
-    PROWIM_wingpropinfo.propeller[0].rot_rate = 600
-    # PROWIM_wingpropinfo.propeller[0].span *= 10
-    PROWIM_wingpropinfo.parameters.vinf = 40
-    PROWIM_wingpropinfo.parameters.air_density = 1.2087
+    PROWIM_wingpropinfo.nr_props = 1
 
     # db_name = os.path.join(BASE_DIR, 'results', 'data_propeller.db')
     # savepath = os.path.join(BASE_DIR, 'results', 'prop_results')
@@ -35,7 +31,7 @@ if __name__=='__main__':
     
     objective = {
                 'HELIX_COUPLED.power_total':
-                    {'scaler': 1/215.21623945}
+                    {'scaler': 1/245.6093049}
                 }
 
     design_vars = {
@@ -55,7 +51,7 @@ if __name__=='__main__':
 
     constraints = {
                     'HELIX_COUPLED.thrust_total':
-                        {'equals': 4_000}
+                        {'equals': 2.4584701*2}
                     }
     
     prob = om.Problem()

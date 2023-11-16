@@ -29,9 +29,7 @@ if __name__ == '__main__':
 
     PROWIM_wingpropinfo.wing.empty_weight = 5 # to make T=D
     PROWIM_wingpropinfo.wing.CL0 = 0. # to make T=D
-    # PROWIM_wingpropinfo.wing.fuel_mass = 0 # to make T=D
-    PROWIM_wingpropinfo.wing.span = 0.748*2
-    # PROWIM_wingpropinfo.linear_mesh = True # smoothness of function is determined by this
+    PROWIM_wingpropinfo.tubemodelON = False
     
     PROWIM_wingpropinfo.__post_init__()
     
@@ -86,8 +84,8 @@ if __name__ == '__main__':
     prob.driver.options['debug_print'] = ['desvars', 'nl_cons']
     prob.driver.opt_settings = {
     "Major feasibility tolerance": 1.0e-8,
-    "Major optimality tolerance": 1.0e-10,
-    "Minor feasibility tolerance": 1.0e-8,
+    "Major optimality tolerance": 1.0e-5,
+    "Minor feasibility tolerance": 1.0e-5,
     "Verify level": -1,
     "Function precision": 1.0e-6,
     # "Major iterations limit": 2,

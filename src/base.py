@@ -102,6 +102,7 @@ class WingPropInfo:
     
     NO_CORRECTION: bool = False # set this to true if you want to run the system without a correction factor
     NO_PROPELLER: bool = False # Set this to true to run system without propeller or correction
+    tubemodelON: bool = True
     
     linear_mesh: bool = False
     
