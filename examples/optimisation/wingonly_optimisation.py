@@ -8,7 +8,7 @@ import copy
 from src.utils.tools import print_results
 from src.postprocessing.plots import all_plots, stackedplots_wing
 from src.integration.coupled_groups_optimisation import WingOptimisation
-from examples.example_classes.PROWIM_classes import PROWIM_wingpropinfo
+from examples.example_classes.PROWIM_classes_large import PROWIM_wingpropinfo
 
 # --- External ---
 import openmdao.api as om
@@ -27,7 +27,7 @@ if __name__ == '__main__':
     #             savedir=savepath)
     # quit()
 
-    PROWIM_wingpropinfo.wing.empty_weight = 5 # to make T=D
+    PROWIM_wingpropinfo.wing.empty_weight = 800 # to make T=D
     PROWIM_wingpropinfo.wing.CL0 = 0. # to make T=D
     PROWIM_wingpropinfo.tubemodelON = False
     
@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
     constraints = {
                     'OPENAEROSTRUCT.AS_point_0.total_perf.CL':
-                        {'upper': 1.},
+                        {'upper': 0.8},
                     'OPENAEROSTRUCT.AS_point_0.L_equals_W':
                         {'equals': 0.},
                     'OPENAEROSTRUCT.AS_point_0.wing_perf.failure':
@@ -115,6 +115,9 @@ if __name__ == '__main__':
     
     print_results(design_vars=design_vars, constraints=constraints, objective=objective,
                   prob=prob, kind="Optimisation")
+    
+    print('Drag: ', prob['OPENAEROSTRUCT.AS_point_0.total_perf.D'])
+    print('Lift: ', prob['OPENAEROSTRUCT.AS_point_0.total_perf.L'])
     
     savepath = os.path.join(BASE_DIR, 'results', 'wing_results')
     all_plots(db_name=db_name,

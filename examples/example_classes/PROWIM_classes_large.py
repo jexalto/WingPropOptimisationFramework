@@ -16,7 +16,8 @@ BASE_DIR = Path(__file__).parents[1]
 with open(os.path.join(BASE_DIR, 'analysis', 'data', 'rotor_40.json'), 'r') as file:
     data = json.load(file)
 
-prop_radius = 0.1185
+factor = 10
+prop_radius = 0.1185*factor
 ref_point = data['ref_point']
 span = data['span']
 twist = data['twist']
@@ -28,11 +29,11 @@ Cl_alpha = data['Cl_alpha']
 CD0 = np.array(data['cd0'])
 M = data['M']
 
-J = 1.0  # advance ratio
+J = 0.8  # advance ratio
 
 wing_twist = .0
-wing_chord = 0.24
-wingspan = 0.748*2  # 0.73*2.*0.952
+wing_chord = 1
+wingspan = 10.  # 0.73*2.*0.952
 
 prop_refinement = 4
 
@@ -47,13 +48,13 @@ PROWIM_parameters = ParamInfo(vinf=40.,
                               air_density=1.2087)
 
 PROWIM_prop_1 = PropInfo(label='Prop1',
-                         prop_location=-0.332,
+                         prop_location=-0.332*factor,
                          nr_blades=4,
                          rot_rate=(PROWIM_parameters.vinf /
                                    (J*2.*prop_radius)) * 2.*np.pi,  # in rad/s,
-                         chord=np.array(chord, order='F'),
+                         chord=np.array(chord, order='F')*factor,
                          twist=np.array(twist, order='F'),
-                         span=np.array(span, order='F'),
+                         span=np.array(span, order='F')*factor,
                          airfoils=[AirfoilInfo(label=f'Foil_{index}',
                                                Cl_alpha=Cl_alpha[index],
                                                alpha_L0=alpha_L0[index],
@@ -66,13 +67,13 @@ PROWIM_prop_1 = PropInfo(label='Prop1',
                          )
 
 PROWIM_prop_2 = PropInfo(label='Prop1',
-                         prop_location=0.332,
+                         prop_location=0.332*factor,
                          nr_blades=4,
                          rot_rate=(PROWIM_parameters.vinf /
                                    (J*2.*prop_radius)) * 2.*np.pi,  # in rad/s,
-                         chord=np.array(chord, order='F'),
+                         chord=np.array(chord, order='F')*factor,
                          twist=np.array(twist, order='F'),
-                         span=np.array(span, order='F'),
+                         span=np.array(span, order='F')*factor,
                          airfoils=[AirfoilInfo(label=f'Foil_{index}',
                                                Cl_alpha=Cl_alpha[index],
                                                alpha_L0=alpha_L0[index],
@@ -94,12 +95,13 @@ PROWIM_wing = WingInfo(label='PROWIM_wing',
                                      order='F')*wing_twist,
                        empty_weight=10.,
                        CL0=0.283,  # if you want to do optimization set this to zero bcs otherwise OAS will return erroneous results
-                       fuel_mass=0
+                       CD0=0.025,
+                       empty_weight = 500
                        )
 
 
 PROWIM_wingpropinfo = WingPropInfo(
-                                   spanwise_discretisation_propeller=19,
+                                   spanwise_discretisation_propeller=17,
                                    spanwise_discretisation_propeller_BEM=spanwise_discretisation_propeller_BEM,
                                    propeller=[PROWIM_prop_1, PROWIM_prop_2],
                                    wing=PROWIM_wing,

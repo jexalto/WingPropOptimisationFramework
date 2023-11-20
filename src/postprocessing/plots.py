@@ -113,7 +113,7 @@ def stackedplots_wing(db_name: str,
                         xlabel=r'Wing spanwise location, $m$', ylabel=[r'$C_l \cdot c ,m$', r'Chord, $m$', r'Twist, deg'],
                         savepath=os.path.join(savedir, 'wing_results'), 
                         prop_circle=[x_prop, y_prop],
-                        noprop=noprop,
+                        noprop=True,
                         clc=[Clc_wing_orig, Clc_wing_opt, lift_ell],
                         chord=[chord_orig, chord_opt],
                         twist=[twist_orig, twist_opt],
@@ -345,8 +345,8 @@ def subplots_prop(design_variable_array: np.array, nr_plots: int,
     y_size = 9
     
     plt.style.use(niceplots.get_style())
-    plt.rc('font', size=14)
-    _, ax = plt.subplots(nr_plots, figsize=(y_size, 8), sharex=True)
+    plt.rc('font', size=16)
+    _, ax = plt.subplots(nr_plots, figsize=(6, 6), sharex=True)
         
     spanwise = design_variable_array
 
@@ -356,10 +356,18 @@ def subplots_prop(design_variable_array: np.array, nr_plots: int,
         ymax = np.max([np.max(original), np.max(optimised)])*margin
         ymin = np.min([np.min(original), np.min(optimised)])*1/margin
         
-        ax[iplot].plot(spanwise[iplot], original,
-                label=f'Original', color='Orange', linewidth=linewidth)
-        ax[iplot].plot(spanwise[iplot], optimised,
-                label=f'Optimised', color='b', linestyle='dashed', linewidth=linewidth)
+        if iplot==0:
+            start = 16
+            ax[iplot].plot(spanwise[iplot][start:], original[start:],
+                    label=f'Initial', color='Orange', linewidth=linewidth)
+            ax[iplot].plot(spanwise[iplot][start:], optimised[start:],
+                    label=f'Optimised', color='b', linestyle='dashed', linewidth=linewidth)
+        else:
+            start = 4
+            ax[iplot].plot(spanwise[iplot][start:], original[start:],
+                    label=f'Initial', color='Orange', linewidth=linewidth)
+            ax[iplot].plot(spanwise[iplot][start:], optimised[start:],
+                    label=f'Optimised', color='b', linestyle='dashed', linewidth=linewidth)
 
         if iplot==1:
             ax[iplot].set_xlabel(xlabel, fontweight='ultralight')
@@ -370,10 +378,11 @@ def subplots_prop(design_variable_array: np.array, nr_plots: int,
             ymax)
         )
         ax[iplot].set_xlim((
-            np.min(spanwise[iplot])*margin,
+            0.2,
             np.max(spanwise[iplot])*margin)
         )
-        ax[iplot].legend(prop={'size': 9})
+        if iplot==0:
+            ax[iplot].legend()
         niceplots.adjust_spines(ax[iplot], outward=True)
 
     plt.savefig(savepath)
@@ -397,8 +406,8 @@ def subplots_wingprop(design_variable_array: np.array, nr_plots: int,
     y_size = 9
     
     plt.style.use(niceplots.get_style())
-    plt.rc('font', size=14)
-    _, ax = plt.subplots(nr_plots, figsize=(y_size, 8), sharex=True)
+    # plt.rc('font', size=14)
+    _, ax = plt.subplots(nr_plots, figsize=(6, 6), sharex=True)
         
     spanwise = design_variable_array
 
@@ -408,7 +417,7 @@ def subplots_wingprop(design_variable_array: np.array, nr_plots: int,
         ymax = np.max([max(original), np.max(optimised)])*margin
         
         ax[iplot].plot(spanwise[iplot], original,
-                label=f'Original', color='Orange', linewidth=linewidth)
+                label=f'Initial', color='Orange', linewidth=linewidth)
         ax[iplot].plot(spanwise[iplot], optimised,
                 label=f'Optimised', color='b', linestyle='dashed', linewidth=linewidth)
         
@@ -445,7 +454,8 @@ def subplots_wingprop(design_variable_array: np.array, nr_plots: int,
             np.min(spanwise[iplot])*margin,
             np.max(spanwise[iplot])*margin)
         )
-        ax[iplot].legend(prop={'size': 9})
+        if iplot==0:
+            ax[iplot].legend()
         niceplots.adjust_spines(ax[iplot], outward=True)
 
     plt.savefig(savepath)
@@ -463,7 +473,7 @@ def optimisation_result_plot(design_variable_array: np.array, original: np.array
     ymax = np.max([max(original), np.max(optimised)])
 
     plt.style.use(niceplots.get_style())
-    _, ax = plt.subplots(figsize=(10, 7))
+    _, ax = plt.subplots(figsize=(8, 6))
 
     spanwise = design_variable_array
     ax.plot(spanwise, original,
